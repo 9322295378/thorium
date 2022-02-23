@@ -30,8 +30,8 @@ router.get('/test-me', function (req, res) {
 
     //Module 3 functions
     formatter.trim()
-    formatter.changeToUpperCase()
-    formatter.changetoLowerCase()
+    formatter.upperCase()
+    formatter.lowerCase()
 
     //Lodash functions
     let months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']

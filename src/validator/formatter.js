@@ -16,6 +16,6 @@ function upperCase(abc)
 }
 
 //console.log(a)
-module.exports.trim = trim()
-module.exports.lowerCase = lowerCase();
-module.exports.upperCase = upperCase();
+module.exports.trim = trim;
+module.exports.lowerCase = lowerCase;
+module.exports.upperCase = upperCase;

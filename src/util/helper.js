@@ -15,7 +15,7 @@ function getBatchInfo(){
 
 }
 
-module.exports.printDate = printDate
-module.exports.printMonth = printMonth
-module.exports.getBatchInfo = getBatchInfo
+module.exports.printCurrentDate() =printDate
+module.exports.printCurrentMonth()= printMonth
+module.exports.printBatchInfo() = getBatchInfo 
 
