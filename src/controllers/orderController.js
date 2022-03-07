@@ -1,5 +1,5 @@
 const OrderModel = require("../models/orderSchema.js");
-const ProductModel = require("../models/productSchema.js");
+const ProductModel = require("../models/productSchema");
 const UserModel = require("../models/userSchema.js");
 
 const createOrder = async function (req, res) {
