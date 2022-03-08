@@ -13,7 +13,7 @@ router.get("/test-me", function (req, res) {
 
 router.post("/createUser", HeaderMiddleware.freeAppUser, UserController.createUser )
 router.post("/createProduct", ProductController.createProduct  )
-router.post("/createOrder", HeaderMiddleware.freeAppUser, OrderController.createOrder )
+router.post("/createOrder", OrderController.createOrder )
 
 
 
