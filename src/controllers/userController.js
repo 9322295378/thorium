@@ -91,7 +91,7 @@ const updateUser = async function (req, res) {
   }
 
   let userData = req.body;
-  let updatedUser = await userModel.findOneAndUpdate({ _id: userId },{$set:{userId:true}}, {new:true});
+  let updatedUser = await userModel.findOneAndUpdate({ _id: userId }, {new:true});
   //res.send({ status: updatedUser, data: updatedUser });
   res.send({msg:updatedUser})
 };
