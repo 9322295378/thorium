@@ -22,7 +22,7 @@
     "updatedAt" : ISODate("2022-03-08T05:04:18.737Z"),
     "__v" : 0
 }
-```
+``
 
 
 - Write a POST api /users to register a user from the user details in request body. 
