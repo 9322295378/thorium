@@ -83,6 +83,45 @@ const updateUser = async function (req, res) {
   let updatedUser = await userModel.findOneAndUpdate({ _id: userId }, userData);
   res.send({ status: updatedUser, data: updatedUser });
 };
+const deleteUser = async function (req, res) {
+  // Do the same steps here:
+  // Check if the token is present
+  // Check if the token present is a valid token
+  // Return a different error message in both these cases
+  
+    let userId = req.params.userId;
+    console.log(userId)
+    let user = await userModel.findById(userId);
+    //Return an error if no user with the given id exists in the db
+    if (!user) {
+      return res.send("No such user exists");
+    }
+  
+    // let userData = req.body;
+    let deletedUser = await userModel.findOneAndUpdate({ _id: userId },{$set:{isDeleted:true}});
+    res.send({ status: deletedUser, data: deletedUser });
+  };
+
+
+  // const updateUser = async function (req, res) {
+  //   // Do the same steps here:
+  //   // Check if the token is present
+  //   // Check if the token present is a valid token
+  //   // Return a different error message in both these cases
+    
+  //     let userId = req.params.userId;
+  //     let user = await userModel.findById(userId);
+  //     //Return an error if no user with the given id exists in the db
+  //     if (!user) {
+  //       return res.send("No such user exists");
+  //     }
+    
+  //     let userData = req.body;
+  //     let updatedUser = await userModel.findOneAndUpdate({ _id: userId }, userData);
+  //     res.send({ status: updatedUser, data: updatedUser });
+  //   };
+    
+
 
 const postMessage = async function (req, res) {
     let message = req.body.message
@@ -115,6 +154,9 @@ const postMessage = async function (req, res) {
     return res.send({status: true, data: updatedUser})
 }
 
+
+
+module.exports.deleteUser=deleteUser;
 module.exports.createUser = createUser;
 module.exports.getUserData = getUserData;
 module.exports.updateUser = updateUser;
