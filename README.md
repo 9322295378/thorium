@@ -46,3 +46,20 @@ Create API's to do each of the following:
                     "url": "https://i.imgflip.com/5mvxax.jpg",
                     "page_url": "https://imgflip.com/i/5mvxax"
                 }
+
+
+// https://i.imgflip.com/28s2gu.jpg
+
+//////2e5cd0999b42227c59e2bb307d8f7488 key
+//	Komal 
+4618e44425748c488243a6f2cc7daf91
+/v2/appointment/sessions/public/findByDistrict
+
+ {
+                "id": "135678846",
+                "name": "Who Killed Hannibal",
+                "url": "https://i.imgflip.com/28s2gu.jpg",
+                "width": 1280,
+                "height": 1440,
+                "box_count": 3
+            },
