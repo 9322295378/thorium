@@ -4,8 +4,9 @@ const UserModel = require("../models/userModel")
 const jwt = require("jsonwebtoken")
 
 const isValid = function (value) {
-    if (typeof value == undefined || value == null || value.length == 0) return false
+    if (typeof value == undefined || value == null ) return false
     if (typeof value === 'string' && value.trim().length === 0) return false
+    if(typeof value === 'number' && value.toString().trim.length === 0) return false
     return true
 
 }
@@ -38,7 +39,7 @@ const createUserData = async function (req, res) {
         if (!isValid(data.name)) {
             return res.status(400).send({ status: false, msg: "Name is Required" })
         }
-        if (isValid(data.phone))
+     
 
             if (!(/^([+]\d{2})?\d{10}$/.test(data.phone)))
                 return res.status(400).send({ status: false, msg: "Please Enter  a Valid Phone Number" })
@@ -48,13 +49,12 @@ const createUserData = async function (req, res) {
         if (alreadyExsit) {
             return res.status(400).send({ status: false, msg: "phone already exit" })
         }
-
+        if (!isValid(data.email))
+        return res.status(400).send({ status: false, msg: "email is required" })
         if (isValid(data.email))
             if (!(/^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/.test(data.email)))
                 return res.status(400).send({ status: false, msg: "is not a valid email" })
-        if (!isValid(data.email))
-            return res.status(400).send({ status: false, msg: "email is required" })
-
+       
         // let Lowercase = email.toLowerCase()
         // const filterUser = await UserModel.findOne({ email: Lowercase })
         // if (!filterUser) {
@@ -116,9 +116,11 @@ const loginUser = async function (req, res) {
             let token = jwt.sign(
                 {
                     userId: user._id,
-                    email: user._email
+                    email: user._email,
+                    iat:Math.floor(Date.now()/1000),
+                    ex:Math.floor(Date.now()/1000)+60*60*60
 
-                }, "Group4"
+                }, "Group4" 
 
             );
             res.status(200).setHeader("x-auth-token", token);
