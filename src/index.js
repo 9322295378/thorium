@@ -2,8 +2,10 @@ const express = require('express');
 var bodyParser = require('body-parser');
 
 const route = require('./routes/route.js');
+const multer = require("multer")
 
 const app = express();
+app.use(multer().any())
 
 
 app.use(bodyParser.json());

@@ -28,6 +28,10 @@ const BookSchema = new mongoose.Schema({
                   required:true,
                    unique:true
         },
+        bookCover:{
+ type:String
+        },
+          
         category:
          {
                  type:String,
@@ -41,9 +45,11 @@ const BookSchema = new mongoose.Schema({
         },
         reviews:
          {
-         type:Number,default:0
+         type:Number,
+         required:true,
+         default:0
          },
-          
+        
         deletedAt: {
                 type:Date
         }, 

@@ -20,95 +20,182 @@ const isValidObjectId = function (ObjectId) {
     return mongoose.Types.ObjectId.isValid(ObjectId)
 }
 
-
-
 const createBook = async function (req, res) {
     try {
-        data = req.body
-        const {
+        const requestBody = req.body;
+        if (!isValidRequestBody(requestBody)) {
+            return res.status(400).send({ status: false, message: 'Invalid request parameters. Please provide blog details' })
+
+        }
+        const { title, excerpt, userId, ISBN, category, subcategory, reviews, isDeleted, releasedAt, bookCover } = requestBody;
+        if (!isValid(title)) {
+            return res.status(400).send({ status: false, message: 'Book Title is required' })
+
+        }
+        const isTitleUsed = await bookModel.findOne({ title });
+
+        if (isTitleUsed) {
+            return res.status(400).send({ status: false, message: `${title}  already registered` })
+
+        }
+        if (!isValid(excerpt)) {
+            return res.status(400).send({ status: false, message: 'Excerpt is required' })
+
+        }
+        if (!isValid(userId)) {
+            return res.status(400).send({ status: false, message: 'UserId is required' })
+
+        }
+        if (!isValid(ISBN)) {
+            return res.status(400).send({ status: false, message: `ISBN is not a valid` })
+
+        }
+        const isISBNalreadyUsed = await bookModel.findOne({ ISBN });
+
+
+        if (isISBNalreadyUsed) {
+            return res.status(400).send({ status: false, message: `${ISBN} should be unique` })
+
+        }
+        const bookCoverAdd = await bookModel.findOne({bookCover})
+        if(bookCoverAdd){
+            return res.status(400).send({status:false, msg:"already present the url"})
+        }
+        if (!isValid(category)) {
+            return res.status(400).send({ status: false, message: 'Book category is required' })
+
+        }
+        if (!isValid(subcategory)) {
+            return res.status(400).send({ status: false, message: 'Book subcategory is required' })
+
+        }
+
+        if (!isValid(releasedAt)) {
+            return res.status(400).send({ status: false, message: ' Please provide a valid ReleasedAt date' })
+
+        }
+        //Validation of releasedAt===========
+
+        if (!/((\d{4}[\/-])(\d{2}[\/-])(\d{2}))/.test(releasedAt)) {
+            return res.status(400).send({ status: false, message: ' \"YYYY-MM-DD\" this Date format & only number format is accepted ' })
+        }
+
+
+        const user = await userModel.findById(userId);
+        if (!user) {
+            return res.status(400).send({ status: false, message: `User does not exists` })
+
+        }
+        const bookData = {
             title,
             excerpt,
             userId,
             ISBN,
+            bookCover,
             category,
             subcategory,
             reviews,
-            deletedAt,
-            isDeleted,
-            releasedAt
-        } = data
+            releasedAt,
+            isDeleted: isDeleted ? isDeleted : false,
+            deletedAt: isDeleted ? new Date() : null
+        }
+        const newBook = await bookModel.create(bookData)
+        res.status(201).send({ status: true, message: 'New book created successfully', data: newBook })
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({ status: false, message: error.message });
+    }
+
+}
+// const createBook = async function (req, res) {
+//     try {
+//         data = req.body
+//         const {
+//             title,
+//             excerpt,
+//             userId,
+//             ISBN,
+//             category,
+//             subcategory,
+//             reviews,
+//             deletedAt,
+//             isDeleted,
+//             releasedAt,
+//             bookCover
+//         } = data
 
 
-        let isValidUser = await userModel.findById(userId)
-        if (!isValidUser) {
-            return res.status(400).send({ status: false, msg: "you are not allow to create the data ! .. token is Wrong" })
-        }
-        //if (req.body.userId == req.decodedToken.userId){
-        if (!isValidRequestBody(data)) {
-            return res.status(400).send({ status: false, msg: "plz enter some data" })
-        }
-        if (!isValid(title)) {
-            return res.status(400).send({ status: false, msg: "title  is required" })
-        }
-        const duplicateTitle = await bookModel.findOne({ title: data.title })
-        //console.log(uniqe)
-        if (duplicateTitle) {
-            return res.status(400).send({ status: false, msg: "duplicate key title" })
-        }
-        if (!isValid(excerpt)) {
-            return res.status(400).send({ status: false, msg: "excerpt  is required" })
-        }
-        if (!isValid(userId)) {
-            return res.status(400).send({ status: false, msg: "userId is required" })
-        }
-        if(!isValidObjectId(userId)){
-            return res.status(400).send({status:false, msg: 'Its not valid Id'})
-        }
+//         let isValidUser = await userModel.findById(userId)
+//         if (!isValidUser) {
+//             return res.status(400).send({ status: false, msg: "you are not allow to create the data ! .. token is Wrong" })
+//         }
+//         //if (req.body.userId == req.decodedToken.userId){
+//         if (!isValidRequestBody(data)) {
+//             return res.status(400).send({ status: false, msg: "plz enter some data" })
+//         }
+//         if (!isValid(title)) {
+//             return res.status(400).send({ status: false, msg: "title  is required" })
+//         }
+//         const duplicateTitle = await bookModel.findOne({ title: data.title })
+//         //console.log(uniqe)
+//         if (duplicateTitle) {
+//             return res.status(400).send({ status: false, msg: "duplicate key title" })
+//         }
+//         if (!isValid(excerpt)) {
+//             return res.status(400).send({ status: false, msg: "excerpt  is required" })
+//         }
+//         if (!isValid(userId)) {
+//             return res.status(400).send({ status: false, msg: "userId is required" })
+//         }
+//         if(!isValidObjectId(userId)){
+//             return res.status(400).send({status:false, msg: 'Its not valid Id'})
+//         }
 
-        let id = await userModel.findById({ _id: userId })
-        if (!id) {
-            return res.status(400).send({ status: false, msg: "it not valid id" })
-        }
-        //console.log(id)
-        if (!isValid(ISBN)) {
-            return res.status(400).send({ status: false, msg: "ISBN is required" })
-        }
-        const duplicateISBN = await bookModel.findOne({ ISBN: ISBN })
-        if
-            (duplicateISBN) {
-            return res.status(400).send({ status: false, msg: "duplicate key ISBN" })
-        }
-        if (!isValid(category)) {
-            return res.status(400).send({ status: false, msg: "category is required" })
-        }
-        if (!isValid(subcategory)) {
-            return res.status(400).send({ status: false, msg: "subcategory is required" })
-        }
-        if (!isValid(releasedAt)) {
-            return res.status(400).send({ status: false, msg: "releasedAt is required" })
-        }
+//         let id = await userModel.findById({ _id: userId })
+//         if (!id) {
+//             return res.status(400).send({ status: false, msg: "it not valid id" })
+//         }
+//         //console.log(id)
+//         if (!isValid(ISBN)) {
+//             return res.status(400).send({ status: false, msg: "ISBN is required" })
+//         }
+//         const duplicateISBN = await bookModel.findOne({ ISBN: ISBN })
+//         if
+//             (duplicateISBN) {
+//             return res.status(400).send({ status: false, msg: "duplicate key ISBN" })
+//         }
+//         if (!isValid(category)) {
+//             return res.status(400).send({ status: false, msg: "category is required" })
+//         }
+//         if (!isValid(subcategory)) {
+//             return res.status(400).send({ status: false, msg: "subcategory is required" })
+//         }
+//         if (!isValid(releasedAt)) {
+//             return res.status(400).send({ status: false, msg: "releasedAt is required" })
+//         }
 
-        if (!/((\d{4}[\/-])(\d{2}[\/-])(\d{2}))/.test(releasedAt)) {
-            return res.status(400).send({ status: false, message: ' date should be "YYYY-MM-DD\" ' })
-        }
-        if (isDeleted == true) {
-            (/((\d{4}[\/-])(\d{2}[\/-])(\d{2}))/.test(isDeleted))
-            return res.status(400).send({ status: false, data: deletedAt })
-        }
+//         if (!/((\d{4}[\/-])(\d{2}[\/-])(\d{2}))/.test(releasedAt)) {
+//             return res.status(400).send({ status: false, message: ' date should be "YYYY-MM-DD\" ' })
+//         }
+//         if (isDeleted == true) {
+//             (/((\d{4}[\/-])(\d{2}[\/-])(\d{2}))/.test(isDeleted))
+//             return res.status(400).send({ status: false, data: deletedAt })
+//         }
 
      
       
         
 
-        let saveData = await bookModel.create(data);
-        res.status(201).send({ status: true, data: saveData, msg: "succefully Created" })
-    }
+//         let saveData = await bookModel.create(data);
+//         res.status(201).send({ status: true, data: saveData, msg: "succefully Created" })
+//     }
 
-    catch (err) {
-        return res.status(500).send({ status: false, msg: err.message })
-    }
+//     catch (err) {
+//         return res.status(500).send({ status: false, msg: err.message })
+//     }
 
-}
+// }
 
 const getBook = async function (req, res) {
     try {
@@ -241,13 +328,16 @@ const deleteById = async function (req, res) {
         }
 
         let ifExists = await bookModel.findById(Id)
+        if (!ifExists) {
+            return res.status(404).send({ Status: false, msg: "Data Not Found" })
+        }
         if(!isValidObjectId(ifExists)){
             return res.status(400).send({status:false, msg: 'Its not valid Id'})
         }
 
-        if (!ifExists) {
-            return res.status(404).send({ Status: false, msg: "Data Not Found" })
-        }
+        // if (!ifExists) {
+        //     return res.status(404).send({ Status: false, msg: "Data Not Found" })
+        // }
         let data = { isDeleted: true, deletedAt: moment() }
         if (ifExists.isDeleted !== true) {
 
